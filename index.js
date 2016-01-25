@@ -1,7 +1,5 @@
-var http = require('http'),
-uuid = require('node-uuid'),
+var uuid = require('node-uuid'),
 imagemagick = require('imagemagick-native'),
-request = require('request'),
 process = require('process'),
 fs = require('fs'),
 dotenv = require('dotenv'),
