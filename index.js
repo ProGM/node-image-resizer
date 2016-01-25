@@ -2,7 +2,6 @@ var uuid = require('node-uuid'),
 imagemagick = require('imagemagick-native'),
 process = require('process'),
 fs = require('fs'),
-dotenv = require('dotenv'),
 image_proxy = require('./image_proxy.js'),
 matcher = require('./params_matcher.js'),
 downloader = require('./downloader.js');
@@ -16,9 +15,10 @@ if (typeof String.prototype.startsWith != 'function') {
     return this.slice(0, str.length) == str;
   };
 }
-
-if (dotenv) { dotenv.config(); }
-
+if ( app.get('env') === 'development' ) {
+  var dotenv = require('dotenv');
+  if (dotenv) { dotenv.config(); }
+}
 var proxy = image_proxy(app);
 
 proxy.get('/original/*', function(req, res, tempfile, content_type) {
