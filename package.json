@@ -20,6 +20,7 @@
     "fs": "0.0.2",
     "imagemagick-native": "^1.8.0",
     "node-uuid": "^1.4.7",
-    "process": "^0.11.2"
+    "process": "^0.11.2",
+    "request": "^2.67.0"
   }
 }
