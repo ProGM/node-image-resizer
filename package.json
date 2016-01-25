@@ -1,0 +1,15 @@
+{
+  "name": "node-image-resizer",
+  "version": "1.0.0",
+  "description": "A node image smart resizer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "engine": "node 0.10.41",
+  "devDependencies": {
+    "dotenv": "^2.0.0"
+  }
+}
