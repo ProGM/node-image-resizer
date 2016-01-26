@@ -35,17 +35,16 @@ proxy.get('/:size/*', function(req, res, tempfile, content_type) {
   var reduced_filename = __dirname + '/tmp/' + uuid.v4() + '.tmp';
   var complete_path = __dirname + tempfile.substring(1);
 
-  // console.log(req.params.size)
-  // console.log(reduced_filename)
-  // console.log(complete_path)
+  var params = matcher(req.params.size, [["([0-9]+)x([0-9]+)([\^]?)", 'width', 'height', 'type']])
 
-  var params = matcher(req.params.size, [["([0-9]+)x([0-9]+)([\^>]?)", 'width', 'height', 'type']])
+  console.log("TYPE: ", params.type);
 
   fs.writeFileSync(reduced_filename, imagemagick.convert({
       srcData: fs.readFileSync(complete_path),
       width: params.width,
       height: params.height,
-      resizeStyle: 'aspectfit'
+      resizeStyle: params.type == '^' ? 'aspectfill' : 'aspectfit',
+      gravity: 'Center'
   }));
 
   var options = {
