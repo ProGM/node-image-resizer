@@ -39,12 +39,16 @@ proxy.get('/:size/*', function(req, res, tempfile, content_type) {
 
   console.log("TYPE: ", params.type);
 
+  var width = Math.max(1, Math.min(parseInt(params.width), 2000));
+  var height = Math.max(1, Math.min(parseInt(params.height), 2000));
+
   fs.writeFileSync(reduced_filename, imagemagick.convert({
       srcData: fs.readFileSync(complete_path),
-      width: params.width,
-      height: params.height,
+      width: width,
+      height: height,
       resizeStyle: params.type == '^' ? 'aspectfill' : 'aspectfit',
-      gravity: 'Center'
+      gravity: 'Center',
+      quality: 50
   }));
 
   var options = {
