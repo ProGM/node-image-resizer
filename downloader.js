@@ -12,15 +12,20 @@ module.exports = {
       request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
     });
   },
-  download_temp: function(uri, callback) {
+  download_temp: function(uri, success, failure) {
     var filename = "./tmp/" + uuid.v1() + ".tmp";
     request.head(uri, function(err, res, body){
+      console.log('status code:', res.statusCode);
       console.log('content-type:', res.headers['content-type']);
       console.log('content-length:', res.headers['content-length']);
-
-      request(uri).pipe(fs.createWriteStream(filename)).on('close', function() {
-        callback(filename, res.headers['content-type'])
-      });
+      if (res.statusCode == 200) {
+        request(uri).pipe(fs.createWriteStream(filename)).on('close', function() {
+          console.log()
+          success(filename, res.headers['content-type'])
+        });
+      } else {
+        failure(res, body);
+      }
     });
   }
 }

@@ -14,6 +14,10 @@ module.exports = function(app) {
 
     downloader.download_temp(real_path, function(filename, type) {
       callback(req, res, filename, type);
+    }, function() {
+      console.log("File not found: " + real_path);
+      res.status(404);
+      res.type('txt').send('Not found');
     });
   }
 
