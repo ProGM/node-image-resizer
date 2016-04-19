@@ -21,7 +21,36 @@ if ( app.get('env') === 'development' ) {
 }
 var proxy = image_proxy(app);
 
-proxy.get('/original/*', function(req, res, tempfile, content_type) {
+proxy.get(false, '/external/:size/*', function(req, res, tempfile, content_type) {
+  var reduced_filename = __dirname + '/tmp/' + uuid.v4() + '.tmp';
+  var complete_path = __dirname + tempfile.substring(1);
+
+  var params = matcher(req.params.size, [["([0-9]+)x([0-9]+)([\^]?)", 'width', 'height', 'type']])
+
+  console.log("TYPE: ", params.type);
+
+  var width = Math.max(1, Math.min(parseInt(params.width), 2000));
+  var height = Math.max(1, Math.min(parseInt(params.height), 2000));
+
+  fs.writeFileSync(reduced_filename, imagemagick.convert({
+      srcData: fs.readFileSync(complete_path),
+      width: width,
+      height: height,
+      resizeStyle: params.type == '^' ? 'aspectfill' : 'aspectfit',
+      gravity: 'Center',
+      quality: 50
+  }));
+
+  var options = {
+    headers: {
+      'Content-Type' : content_type
+    },
+    maxAge: 3600 * 24 * 365 * 1000
+  }
+  res.sendFile(reduced_filename, options);
+});
+
+proxy.get(process.env.IMAGE_URL, '/original/*', function(req, res, tempfile, content_type) {
   var options = {
     headers: {
       'Content-Type' : content_type
@@ -31,7 +60,7 @@ proxy.get('/original/*', function(req, res, tempfile, content_type) {
   res.sendFile(__dirname + tempfile.substring(1), options);
 });
 
-proxy.get('/:size/*', function(req, res, tempfile, content_type) {
+proxy.get(process.env.IMAGE_URL, '/:size/*', function(req, res, tempfile, content_type) {
   var reduced_filename = __dirname + '/tmp/' + uuid.v4() + '.tmp';
   var complete_path = __dirname + tempfile.substring(1);
 

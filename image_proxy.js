@@ -4,12 +4,16 @@ var process = require('process'),
 
 
 module.exports = function(app) {
-  function downloadFile(path_name, req, res, callback) {
+  function downloadFile(path_name, prepend_url, req, res, callback) {
     var parsed_url = url.parse(req.url, true);
     var path_name = path_name.replace(/\/:([a-z]+)\//g, "/[^/]+/");
-    var new_path = new RegExp("^" + path_name.replace('/*', ''))
+    var new_path = new RegExp("^" + path_name.replace('*', ''))
 
-    var real_path = process.env.IMAGE_URL + parsed_url.path.replace(new_path, '')
+    var real_path = parsed_url.path.replace(new_path, '');
+
+    if (prepend_url) {
+      real_path = prepend_url + '/' + real_path;
+    }
     console.log(real_path);
 
     downloader.download_temp(real_path, function(filename, type) {
@@ -22,14 +26,11 @@ module.exports = function(app) {
   }
 
   return {
-    get: function() {
-      var new_arguments = arguments;
-      var last_argument = new_arguments[new_arguments.length - 1];
-
-      new_arguments[new_arguments.length - 1] = function(req, res) {
-        downloadFile(new_arguments[0], req, res, last_argument);
+    get: function(prepend_url, path, callback) {
+      var new_callback = function(req, res) {
+        downloadFile(path, prepend_url, req, res, callback);
       }
-      app.get.apply(app, new_arguments);
+      app.get.apply(app, [path, new_callback]);
     },
     listen: function(port) {
       app.listen(port);
