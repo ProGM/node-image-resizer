@@ -1,9 +1,8 @@
 var uuid = require('node-uuid'),
-imagemagick = require('imagemagick-native'),
 process = require('process'),
-fs = require('fs'),
 image_proxy = require('./image_proxy.js'),
 matcher = require('./params_matcher.js'),
+resizer = require('./resizer.js'),
 downloader = require('./downloader.js');
 
 
@@ -32,14 +31,7 @@ proxy.get(false, '/external/:size/*', function(req, res, tempfile, content_type)
   var width = Math.max(1, Math.min(parseInt(params.width), 2000));
   var height = Math.max(1, Math.min(parseInt(params.height), 2000));
 
-  fs.writeFileSync(reduced_filename, imagemagick.convert({
-      srcData: fs.readFileSync(complete_path),
-      width: width,
-      height: height,
-      resizeStyle: params.type == '^' ? 'aspectfill' : 'aspectfit',
-      gravity: 'Center',
-      quality: 50
-  }));
+  var output = resizer.resize(complete_path, reduced_filename, width, height, params.type);
 
   var options = {
     headers: {
@@ -47,7 +39,7 @@ proxy.get(false, '/external/:size/*', function(req, res, tempfile, content_type)
     },
     maxAge: 3600 * 24 * 365 * 1000
   }
-  res.sendFile(reduced_filename, options);
+  res.sendFile(output, options);
 });
 
 proxy.get(process.env.IMAGE_URL, '/original/*', function(req, res, tempfile, content_type) {
@@ -71,14 +63,7 @@ proxy.get(process.env.IMAGE_URL, '/:size/*', function(req, res, tempfile, conten
   var width = Math.max(1, Math.min(parseInt(params.width), 2000));
   var height = Math.max(1, Math.min(parseInt(params.height), 2000));
 
-  fs.writeFileSync(reduced_filename, imagemagick.convert({
-      srcData: fs.readFileSync(complete_path),
-      width: width,
-      height: height,
-      resizeStyle: params.type == '^' ? 'aspectfill' : 'aspectfit',
-      gravity: 'Center',
-      quality: 50
-  }));
+  var output = resizer.resize(complete_path, reduced_filename, width, height, params.type);
 
   var options = {
     headers: {
@@ -86,7 +71,7 @@ proxy.get(process.env.IMAGE_URL, '/:size/*', function(req, res, tempfile, conten
     },
     maxAge: 3600 * 24 * 365 * 1000
   }
-  res.sendFile(reduced_filename, options);
+  res.sendFile(output, options);
 });
 
 proxy.listen(process.env.PORT || 8000);
