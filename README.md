@@ -3,6 +3,8 @@ Node Image Resizer
 
 A simple stateless on-the-fly image resizer in node.js.
 
+[Try it live!](https://node-image-resizer.herokuapp.com/external/100x100/https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1122px-Wikipedia-logo-v2.svg.png)
+
 
 ## How it works
 Supposing you have a website where you store your images, say `assets.mysite.com`.
@@ -20,6 +22,14 @@ Now you can proxy image requests to the resizer, and they got magically resized!
 For instance, if you have an image on `http://assets.mysite.com/my_folder/myimage.png`, you can call `http://resizer.mysite.com/300x300/my_folder/myimage.png` to obtain a 300x300 resized version!
 
 You can also get the original image by calling `http://resizer.mysite.com/original/my_folder/myimage.png`
+
+## External links
+
+You can also resize images from external urls.
+
+You just have to add `/external/` as path fragment.
+
+Example: `http://resizer.mysite.com/external/300x300/http://www.my.image.com/image.png`
 
 ## CDN
 
