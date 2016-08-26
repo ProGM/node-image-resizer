@@ -35,6 +35,16 @@ Example: `http://resizer.mysite.com/external/300x300/http://www.my.image.com/ima
 
 This app does it's best when placed behind a CDN like `cloudflare` or `cloudfront`, since the resized image get cached by the CDN cache for one year.
 
+## Whitelist allowed file types for resizing
+
+Just set an ENV like this:
+
+```bash
+ALLOWED_TYPES=png,jpg,jpeg,gif
+```
+
+Listing all allowed types. Types must be comma-separated file types. They are parsed using [type-is](https://github.com/jshttp/type-is).
+
 ## Deploy on Heroku
 
 To deploy on heroku, you have to change the default buildpacks setup.

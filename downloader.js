@@ -15,8 +15,6 @@ module.exports = (function() {
       }
     })
     .on('response', function(response) {
-      console.log(response.statusCode) // 200
-      console.log(response.headers['content-type']) // 'image/png'
       if (response.statusCode == 200) {
         site_response = response;
       } else {
