@@ -1,4 +1,5 @@
 var imagemagick = require('imagemagick-native'),
+    process = require('process'),
     fs = require('fs');
 
 module.exports = (function() {
@@ -10,7 +11,7 @@ module.exports = (function() {
           height: height,
           resizeStyle: type == '^' ? 'aspectfill' : 'aspectfit',
           gravity: 'Center',
-          quality: 50
+          quality: (process.env.QUALITY || 50)
       }));
       return output;
     } catch (Error) {
